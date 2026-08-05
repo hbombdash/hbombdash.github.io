@@ -1,0 +1,1383 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Hayna's Kitchen — Meal Plan &amp; Shopping List</title>
+<meta name="description" content="10-day meal plan and shopping list builder for the Noosa Triathlon 2026 squad." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --ocean-deep:#0B4F4A;
+    --ocean-mid:#0F6B62;
+    --sand:#EDE4D3;
+    --chalk:#FAF9F5;
+    --coral:#FF6B4A;
+    --gold:#C9862B;
+    --ink:#122423;
+    --ink-soft:#3E5754;
+    --line:rgba(18,36,35,0.14);
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--chalk);
+    color:var(--ink);
+    font-family:'Work Sans', system-ui, sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .skip-link{position:absolute;left:-999px;top:0;background:var(--coral);color:#fff;padding:10px 16px;z-index:100;}
+  .skip-link:focus{left:8px;top:8px;}
+
+  /* ---------- Hero / Header (mirrors index.html) ---------- */
+  .hero{
+    position:relative;
+    background:
+      radial-gradient(120% 140% at 15% -10%, rgba(255,255,255,0.10), transparent 55%),
+      linear-gradient(165deg, var(--ocean-deep) 0%, var(--ocean-mid) 62%, #14807A 100%);
+    color:var(--chalk);
+    padding:clamp(48px,8vw,96px) clamp(20px,6vw,64px) clamp(56px,7vw,88px);
+    overflow:hidden;
+  }
+  .hero::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height:64px;
+    background:
+      repeating-linear-gradient(90deg,
+        var(--chalk) 0 46px,
+        transparent 46px 64px);
+    opacity:0.06;
+    pointer-events:none;
+  }
+  .back-link{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--sand);
+    opacity:0.8;
+    text-decoration:none;
+    margin-bottom:26px;
+  }
+  .back-link:hover, .back-link:focus-visible{opacity:1;text-decoration:underline;}
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--sand);
+    opacity:0.85;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:8px;height:8px;border-radius:50%;
+    background:var(--coral);
+    box-shadow:0 0 0 4px rgba(255,107,74,0.25);
+  }
+  .hero h1{
+    font-family:'Archivo Black', 'Work Sans', sans-serif;
+    font-weight:400;
+    line-height:0.92;
+    margin:0 0 18px;
+    font-size:clamp(40px,8vw,86px);
+    letter-spacing:-0.01em;
+  }
+  .hero h1 .yr{
+    color:var(--coral);
+    display:block;
+  }
+  .hero-sub{
+    max-width:56ch;
+    font-size:clamp(15px,1.6vw,18px);
+    color:var(--sand);
+    line-height:1.55;
+    margin:0 0 34px;
+  }
+  .hero-meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:28px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .hero-meta .stat{
+    border-left:2px solid rgba(250,249,245,0.28);
+    padding-left:14px;
+  }
+  .hero-meta .stat .num{
+    font-size:clamp(22px,3vw,32px);
+    font-weight:700;
+    display:block;
+    line-height:1.1;
+  }
+  .hero-meta .stat .lbl{
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--sand);
+    opacity:0.75;
+  }
+
+  /* ---------- Main / section heads (mirrors index.html) ---------- */
+  main{
+    max-width:1100px;
+    margin:0 auto;
+    padding:clamp(48px,7vw,84px) clamp(20px,6vw,64px) 100px;
+  }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);
+    padding-bottom:14px;
+    margin-bottom:28px;
+  }
+  .section-head h2{
+    font-family:'Archivo Black', sans-serif;
+    font-weight:400;
+    font-size:clamp(22px,3.2vw,30px);
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .section-head .count{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+    letter-spacing:0.04em;
+  }
+
+  footer{
+    border-top:1px solid var(--line);
+    padding:28px clamp(20px,6vw,64px) 40px;
+    max-width:1100px;
+    margin:0 auto;
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+    font-family:'JetBrains Mono', monospace;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  footer a{text-decoration:none;}
+  footer a:hover{text-decoration:underline;}
+
+  /* ---------- Planner layout ---------- */
+  .planner-layout{
+    display:flex;
+    gap:28px;
+    align-items:flex-start;
+    flex-wrap:wrap;
+  }
+  .planner-main{flex:1 1 620px; min-width:300px;}
+  .planner-sidebar{
+    flex:0 0 320px;
+    min-width:280px;
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+    position:sticky;
+    top:20px;
+  }
+  @media (max-width:900px){
+    .planner-sidebar{position:static;}
+  }
+
+  .planner-toolbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:14px;
+  }
+  .planner-count{
+    font-family:'JetBrains Mono', monospace;
+    font-size:13px;
+    color:var(--ink-soft);
+    font-weight:700;
+  }
+  .btn-ghost{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    background:transparent;
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:7px 12px;
+    cursor:pointer;
+    transition:border-color 0.15s ease, color 0.15s ease;
+  }
+  .btn-ghost:hover, .btn-ghost:focus-visible{border-color:var(--ink); color:var(--ink);}
+
+  /* ---------- Day cards ---------- */
+  .day-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(270px,1fr));
+    gap:16px;
+  }
+  .day-card{
+    background:var(--chalk);
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    padding:16px;
+  }
+  .day-card-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+  }
+  .day-card-title{
+    font-family:'Archivo Black', sans-serif;
+    font-weight:400;
+    font-size:17px;
+  }
+  .day-toggle{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    text-decoration:underline;
+    padding:0;
+  }
+  .day-toggle:hover, .day-toggle:focus-visible{color:var(--ocean-deep);}
+
+  .meal-row{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    padding:7px 8px;
+    border-radius:var(--radius);
+    border-left:3px solid transparent;
+    margin-bottom:4px;
+    transition:background 0.15s ease, border-color 0.15s ease;
+  }
+  .meal-row:not(.is-on):hover{background:rgba(18,36,35,0.04);}
+  .meal-row--breakfast.is-on{background:rgba(201,134,43,0.10); border-left-color:var(--gold);}
+  .meal-row--lunch.is-on{background:rgba(255,107,74,0.09); border-left-color:var(--coral);}
+  .meal-row--dinner.is-on{background:rgba(11,79,74,0.09); border-left-color:var(--ocean-deep);}
+
+  input[type=checkbox]{accent-color:var(--ocean-deep); width:16px; height:16px; cursor:pointer; flex-shrink:0;}
+
+  .meal-info{flex:1; min-width:0; display:flex; flex-direction:column; gap:1px;}
+  .meal-kind{
+    font-family:'JetBrains Mono', monospace;
+    font-size:9.5px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .meal-row--breakfast .meal-kind{color:#8a5a1f;}
+  .meal-row--lunch .meal-kind{color:var(--coral);}
+  .meal-row--dinner .meal-kind{color:var(--ocean-deep);}
+  .meal-name{
+    font-size:13px;
+    line-height:1.25;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+
+  .stepper{display:flex; align-items:center; gap:4px; flex-shrink:0;}
+  .stepper-btn{
+    width:22px; height:22px;
+    border-radius:var(--radius);
+    border:1px solid var(--line);
+    background:#fff;
+    cursor:pointer;
+    font-size:13px;
+    line-height:1;
+    font-family:'Work Sans', sans-serif;
+    transition:background 0.15s ease, color 0.15s ease;
+  }
+  .stepper-btn:hover, .stepper-btn:focus-visible{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .stepper-val{font-family:'JetBrains Mono', monospace; font-size:12px; width:14px; text-align:center;}
+
+  /* ---------- Snacks ---------- */
+  .snacks-block{margin-top:30px;}
+  .snacks-block h3{
+    font-family:'Archivo Black', sans-serif;
+    font-weight:400;
+    font-size:19px;
+    margin:0 0 12px;
+  }
+  .snack-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(230px,1fr));
+    gap:10px;
+  }
+  .snack-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:var(--radius);
+    background:var(--chalk);
+    border:1px solid var(--line);
+    transition:background 0.15s ease, border-color 0.15s ease;
+  }
+  .snack-row.is-on{background:rgba(255,107,74,0.08); border-color:var(--ink);}
+  .snack-name{flex:1; font-size:13px;}
+
+  /* ---------- Receipt / shopping list ---------- */
+  .receipt{
+    background:#fff;
+    border:1px solid var(--ink);
+    border-radius:var(--radius);
+    box-shadow:4px 5px 0 rgba(18,36,35,0.08);
+    padding:22px 20px 18px;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .receipt-head{text-align:center; margin-bottom:10px;}
+  .receipt-title{font-size:14px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase;}
+  .receipt-sub{font-size:10.5px; color:var(--ink-soft); margin-top:3px;}
+  .receipt-rule{border-top:2px dashed var(--line); margin:12px 0;}
+  .receipt-empty{font-size:12px; color:var(--ink-soft); text-align:center; padding:20px 0;}
+  .receipt-body{max-height:52vh; overflow-y:auto; padding-right:4px;}
+  .receipt-cat{margin-bottom:12px;}
+  .receipt-cat-name{font-size:10px; font-weight:700; letter-spacing:0.06em; color:var(--ink-soft); margin-bottom:4px;}
+  .receipt-item{display:flex; justify-content:space-between; gap:8px; font-size:12.5px; padding:2px 0; color:var(--ink);}
+  .receipt-qty{color:var(--ink-soft); flex-shrink:0; white-space:nowrap;}
+
+  .doordash-card{
+    background:var(--chalk);
+    border:1px solid var(--ink);
+    border-radius:var(--radius);
+    padding:20px 18px 16px;
+  }
+  .doordash-head{text-align:center; margin-bottom:10px;}
+  .doordash-title{font-family:'Archivo Black', sans-serif; font-weight:400; font-size:16px;}
+  .doordash-sub{font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--ink-soft); margin-top:3px;}
+  .doordash-rule{border-top:1px solid var(--line); margin:12px 0;}
+  .doordash-body{max-height:40vh; overflow-y:auto; padding-right:4px;}
+  .doordash-item{font-size:13px; padding:2px 0;}
+
+  .btn-primary, .btn-secondary{
+    width:100%;
+    border:none;
+    border-radius:var(--radius);
+    padding:11px 0;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.02em;
+    cursor:pointer;
+    font-family:'JetBrains Mono', monospace;
+    transition:transform 0.15s ease;
+  }
+  .btn-primary:hover, .btn-secondary:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--ocean-deep); color:#fff;}
+  .btn-secondary{background:var(--coral); color:#fff;}
+
+  .hint-text{font-size:11px; color:var(--ink-soft); margin-top:10px; line-height:1.5; padding:0 4px;}
+
+  /* ---------- Recipe reference ---------- */
+  .recipe-group{margin-bottom:26px;}
+  .recipe-pill{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    border-radius:100px;
+    padding:4px 12px;
+    margin-bottom:10px;
+  }
+  .recipe-pill--breakfast{color:#8a5a1f; background:rgba(201,134,43,0.14);}
+  .recipe-pill--lunch{color:var(--coral); background:rgba(255,107,74,0.12);}
+  .recipe-pill--dinner{color:var(--ocean-deep); background:rgba(11,79,74,0.10);}
+
+  .recipe-list{display:flex; flex-direction:column; gap:8px;}
+  .recipe-card{
+    background:var(--chalk);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+  }
+  .recipe-toggle{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    padding:13px 16px;
+    background:transparent;
+    border:none;
+    cursor:pointer;
+    text-align:left;
+    font-family:'Work Sans', sans-serif;
+  }
+  .recipe-toggle:hover{background:rgba(18,36,35,0.03);}
+  .recipe-name{font-size:14.5px; font-weight:600; color:var(--ink);}
+  .recipe-caret{
+    font-size:13px;
+    color:var(--ink-soft);
+    transition:transform 0.15s ease;
+    flex-shrink:0;
+  }
+  .recipe-caret.is-open{transform:rotate(180deg);}
+  .recipe-detail{padding:0 16px 16px;}
+  .recipe-detail-inner{
+    border-top:1px solid var(--line);
+    padding-top:12px;
+    display:flex;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .recipe-col{flex:1 1 220px; min-width:200px;}
+  .recipe-col-label{
+    font-family:'JetBrains Mono', monospace;
+    font-size:10px;
+    font-weight:700;
+    color:var(--ink-soft);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+    margin-bottom:6px;
+  }
+  .recipe-ingredients{margin:0; padding-left:18px; font-size:13px; line-height:1.7; color:var(--ink-soft);}
+  .recipe-method{font-size:13px; line-height:1.6; color:var(--ink-soft); margin:0;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; scroll-behavior:auto !important;}
+  }
+</style>
+</head>
+<body>
+<a href="#planner" class="skip-link">Skip to meal planner</a>
+
+<header class="hero">
+  <a href="../index.html" class="back-link">&larr; Start List</a>
+  <p class="eyebrow">Noosa Triathlon 2026 &middot; Fuel The Squad</p>
+  <h1>Hayna&rsquo;s<span class="yr">Kitchen</span></h1>
+  <p class="hero-sub">Tick off whichever meals you&rsquo;re actually cooking this week, set servings for each, and the shopping list builds itself &mdash; sorted by aisle, ready to copy or paste straight into DoorDash.</p>
+  <div class="hero-meta">
+    <div class="stat">
+      <span class="num" id="dayCount">&mdash;</span>
+      <span class="lbl">Days planned</span>
+    </div>
+    <div class="stat">
+      <span class="num" id="recipeCount">&mdash;</span>
+      <span class="lbl">Recipes</span>
+    </div>
+    <div class="stat">
+      <span class="num" id="snackCount">&mdash;</span>
+      <span class="lbl">Snack options</span>
+    </div>
+  </div>
+</header>
+
+<main id="planner">
+  <div class="section-head">
+    <h2>Build This Week&rsquo;s Shop</h2>
+    <span class="count">Selections reset on reload &mdash; copy your list before closing</span>
+  </div>
+
+  <div class="planner-layout">
+    <div class="planner-main" id="plannerRoot"></div>
+    <aside class="planner-sidebar">
+      <div id="shoppingListRoot"></div>
+      <div id="doordashRoot"></div>
+    </aside>
+  </div>
+
+  <div class="section-head" style="margin-top:56px;">
+    <h2>Recipe Reference</h2>
+    <span class="count">Tap a recipe to expand ingredients &amp; method</span>
+  </div>
+  <div id="recipeRefRoot"></div>
+</main>
+
+<footer>
+  <span>Hayna&rsquo;s Kitchen &mdash; Noosa Triathlon 2026 fuel squad</span>
+  <a href="../index.html">&larr; Back to Start List</a>
+</footer>
+
+<script>
+(function(){
+  // -------------------------------------------------------------------------
+  // DATA: 10-day meal plan (base recipe = 4 servings unless noted)
+  // -------------------------------------------------------------------------
+  var RECIPES = {
+    b1: {
+      name: "Overnight Oats, Berries & Walnuts",
+      kind: "breakfast",
+      baseServings: 4,
+      ingredients: [
+        { name: "Rolled oats", qty: 2, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Milk", qty: 2, unit: "cup", cat: "Dairy & Eggs" },
+        { name: "Greek yoghurt", qty: 1, unit: "cup", cat: "Dairy & Eggs" },
+        { name: "Chia seeds", qty: 2, unit: "tbsp", cat: "Grains & Legumes" },
+        { name: "Honey", qty: 2, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Mixed berries", qty: 1.5, unit: "cup", cat: "Produce" },
+        { name: "Walnuts", qty: 0.5, unit: "cup", cat: "Grains & Legumes" },
+      ],
+      method: "Combine oats, milk, yoghurt, chia, honey and cinnamon in a bowl. Divide into jars. Top with berries and walnuts. Refrigerate overnight (keeps 4-5 days).",
+    },
+    b2: {
+      name: "Baked Egg Muffins & Avo Toast",
+      kind: "breakfast",
+      baseServings: 4,
+      ingredients: [
+        { name: "Eggs", qty: 10, unit: "unit", cat: "Dairy & Eggs" },
+        { name: "Milk", qty: 0.25, unit: "cup", cat: "Dairy & Eggs" },
+        { name: "Baby spinach", qty: 1, unit: "cup", cat: "Produce" },
+        { name: "Zucchini", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Capsicum", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Feta cheese", qty: 0.5, unit: "cup", cat: "Dairy & Eggs" },
+        { name: "Wholegrain sourdough bread", qty: 4, unit: "slice", cat: "Bakery" },
+        { name: "Avocado", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Lemon", qty: 0.25, unit: "unit", cat: "Produce" },
+      ],
+      method: "Preheat oven 180°C. Whisk eggs and milk, stir through veg and feta, season. Pour into a greased muffin tin, bake 18-20 min until set. Serve 3 muffins per portion with avocado toast.",
+    },
+    l1: {
+      name: "Mediterranean Quinoa Bowl",
+      kind: "lunch",
+      baseServings: 4,
+      ingredients: [
+        { name: "Quinoa", qty: 1.5, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Chickpeas", qty: 1, unit: "can", cat: "Canned & Jarred" },
+        { name: "Cucumber", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Cherry tomatoes", qty: 250, unit: "g", cat: "Produce" },
+        { name: "Red onion", qty: 0.5, unit: "unit", cat: "Produce" },
+        { name: "Kalamata olives", qty: 0.5, unit: "cup", cat: "Canned & Jarred" },
+        { name: "Feta cheese", qty: 150, unit: "g", cat: "Dairy & Eggs" },
+        { name: "Olive oil", qty: 0.25, unit: "cup", cat: "Condiments & Oils" },
+        { name: "Lemon", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Tahini", qty: 2, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Garlic", qty: 1, unit: "clove", cat: "Produce" },
+      ],
+      method: "Combine quinoa, chickpeas, cucumber, tomato, onion, olives and feta in a bowl. Whisk dressing ingredients and toss through. Keeps well 4 days.",
+    },
+    l2: {
+      name: "Asian Chicken & Rice Salad",
+      kind: "lunch",
+      baseServings: 4,
+      ingredients: [
+        { name: "Chicken breast", qty: 500, unit: "g", cat: "Meat & Seafood" },
+        { name: "Brown rice", qty: 1.5, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Edamame (frozen)", qty: 1, unit: "cup", cat: "Frozen" },
+        { name: "Carrot", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Cabbage / slaw mix", qty: 1.5, unit: "cup", cat: "Produce" },
+        { name: "Spring onion", qty: 4, unit: "unit", cat: "Produce" },
+        { name: "Sesame seeds", qty: 2, unit: "tbsp", cat: "Grains & Legumes" },
+        { name: "Soy sauce", qty: 3, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Sesame oil", qty: 1, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Rice vinegar", qty: 1, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Ginger", qty: 1, unit: "tsp", cat: "Produce" },
+        { name: "Honey", qty: 1, unit: "tsp", cat: "Condiments & Oils" },
+      ],
+      method: "Poach or pan-fry chicken, cool and slice. Combine rice, edamame, carrot, cabbage and spring onion. Top with chicken. Whisk dressing, store separately and toss through before eating.",
+    },
+    l3: {
+      name: "Moroccan Lentil & Sweet Potato Soup",
+      kind: "lunch",
+      baseServings: 4,
+      ingredients: [
+        { name: "Onion", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Garlic", qty: 2, unit: "clove", cat: "Produce" },
+        { name: "Ground cumin", qty: 1, unit: "tbsp", cat: "Herbs & Spices" },
+        { name: "Cinnamon", qty: 1, unit: "tsp", cat: "Herbs & Spices" },
+        { name: "Paprika", qty: 1, unit: "tsp", cat: "Herbs & Spices" },
+        { name: "Sweet potato", qty: 2, unit: "unit", cat: "Produce" },
+        { name: "Red lentils", qty: 1.5, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Diced tomatoes", qty: 1, unit: "can", cat: "Canned & Jarred" },
+        { name: "Vegetable or chicken stock", qty: 1, unit: "L", cat: "Canned & Jarred" },
+        { name: "Spinach", qty: 2, unit: "cup", cat: "Produce" },
+        { name: "Wholegrain bread", qty: 0.5, unit: "loaf", cat: "Bakery" },
+      ],
+      method: "Sauté onion and garlic, add spices and toast 1 min. Add sweet potato, lentils, tomatoes and stock, simmer 25-30 min until tender. Stir through spinach. Serve with bread. Freezes well.",
+    },
+    l4: {
+      name: "Tuna & White Bean Wraps",
+      kind: "lunch",
+      baseServings: 4,
+      ingredients: [
+        { name: "Tuna (springwater)", qty: 2, unit: "can", cat: "Canned & Jarred" },
+        { name: "Cannellini beans", qty: 1, unit: "can", cat: "Canned & Jarred" },
+        { name: "Red onion", qty: 0.5, unit: "unit", cat: "Produce" },
+        { name: "Cherry tomatoes", qty: 1, unit: "cup", cat: "Produce" },
+        { name: "Parsley", qty: 0.25, unit: "cup", cat: "Produce" },
+        { name: "Olive oil", qty: 3, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Lemon", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Wholemeal wraps", qty: 4, unit: "unit", cat: "Bakery" },
+        { name: "Baby spinach", qty: 1, unit: "cup", cat: "Produce" },
+      ],
+      method: "Mash white beans, mix with tuna, onion, tomato, parsley, olive oil and lemon juice. Store the mix separately and assemble wraps fresh each day with spinach.",
+    },
+    l5: {
+      name: "Turkey Burrito Bowls",
+      kind: "lunch",
+      baseServings: 4,
+      ingredients: [
+        { name: "Turkey mince", qty: 500, unit: "g", cat: "Meat & Seafood" },
+        { name: "Brown rice", qty: 1.5, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Black beans", qty: 1, unit: "can", cat: "Canned & Jarred" },
+        { name: "Corn kernels", qty: 1, unit: "cup", cat: "Canned & Jarred" },
+        { name: "Capsicum", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Avocado", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Salsa", qty: 0.5, unit: "cup", cat: "Condiments & Oils" },
+        { name: "Lime", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Taco seasoning", qty: 1, unit: "tbsp", cat: "Herbs & Spices" },
+      ],
+      method: "Brown turkey mince in oil with taco seasoning. Layer rice, beans, corn, capsicum and mince into containers. Add avocado and salsa fresh just before eating.",
+    },
+    d1: {
+      name: "Baked Salmon, Sweet Potato & Greens",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Salmon fillets", qty: 4, unit: "unit", cat: "Meat & Seafood" },
+        { name: "Sweet potato", qty: 2, unit: "unit", cat: "Produce" },
+        { name: "Olive oil", qty: 2, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Broccolini", qty: 2, unit: "bunch", cat: "Produce" },
+        { name: "Greek yoghurt", qty: 0.5, unit: "cup", cat: "Dairy & Eggs" },
+        { name: "Dill", qty: 1, unit: "tbsp", cat: "Produce" },
+        { name: "Lemon", qty: 0.5, unit: "unit", cat: "Produce" },
+      ],
+      method: "Roast sweet potato wedges 25 min at 200°C. Add salmon, bake a further 12-15 min. Steam broccolini in the last 5 min. Mix yoghurt, dill and lemon for the sauce.",
+    },
+    d2: {
+      name: "Beef & Vegetable Stir-fry",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Beef strips", qty: 500, unit: "g", cat: "Meat & Seafood" },
+        { name: "Brown rice", qty: 1.5, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Broccoli", qty: 1, unit: "head", cat: "Produce" },
+        { name: "Capsicum", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Snap peas", qty: 1, unit: "cup", cat: "Produce" },
+        { name: "Garlic", qty: 2, unit: "clove", cat: "Produce" },
+        { name: "Ginger", qty: 1, unit: "tbsp", cat: "Produce" },
+        { name: "Soy sauce", qty: 3, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Oyster sauce", qty: 1, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Sesame oil", qty: 1, unit: "tsp", cat: "Condiments & Oils" },
+        { name: "Vegetable oil", qty: 1, unit: "tbsp", cat: "Condiments & Oils" },
+      ],
+      method: "Cook rice. Stir-fry beef in batches until browned, set aside. Stir-fry garlic, ginger and vegetables until just tender. Return beef, add sauces, toss to combine. Serve over rice.",
+    },
+    d3: {
+      name: "Chicken & Chickpea Tagine",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Chicken thigh", qty: 500, unit: "g", cat: "Meat & Seafood" },
+        { name: "Onion", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Garlic", qty: 2, unit: "clove", cat: "Produce" },
+        { name: "Cinnamon", qty: 1, unit: "tsp", cat: "Herbs & Spices" },
+        { name: "Ground cumin", qty: 1, unit: "tsp", cat: "Herbs & Spices" },
+        { name: "Paprika", qty: 1, unit: "tsp", cat: "Herbs & Spices" },
+        { name: "Chickpeas", qty: 1, unit: "can", cat: "Canned & Jarred" },
+        { name: "Diced tomatoes", qty: 1, unit: "can", cat: "Canned & Jarred" },
+        { name: "Dried apricots", qty: 0.5, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Couscous", qty: 1.5, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Coriander", qty: 1, unit: "bunch", cat: "Produce" },
+      ],
+      method: "Brown chicken and onion, add garlic and spices, cook 1 min. Add chickpeas, tomatoes and apricots, simmer 25 min. Serve over couscous, topped with coriander.",
+    },
+    d4: {
+      name: "Turkey Bolognese",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Turkey mince", qty: 500, unit: "g", cat: "Meat & Seafood" },
+        { name: "Onion", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Carrot", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Zucchini", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Mushrooms", qty: 200, unit: "g", cat: "Produce" },
+        { name: "Garlic", qty: 2, unit: "clove", cat: "Produce" },
+        { name: "Passata", qty: 700, unit: "g", cat: "Canned & Jarred" },
+        { name: "Tomato paste", qty: 1, unit: "tbsp", cat: "Canned & Jarred" },
+        { name: "Italian herbs", qty: 1, unit: "tsp", cat: "Herbs & Spices" },
+        { name: "Wholemeal pasta", qty: 400, unit: "g", cat: "Grains & Legumes" },
+        { name: "Salad greens", qty: 1, unit: "bag", cat: "Produce" },
+      ],
+      method: "Sauté onion, carrot, zucchini, mushroom and garlic until soft. Add turkey mince, brown. Stir in passata, tomato paste and herbs, simmer 20-25 min. Serve with pasta and a side salad. Freezes well.",
+    },
+    d5: {
+      name: "Grilled Chicken & Quinoa Tabbouleh",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Chicken breast", qty: 500, unit: "g", cat: "Meat & Seafood" },
+        { name: "Quinoa", qty: 1.5, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Parsley", qty: 1, unit: "cup", cat: "Produce" },
+        { name: "Mint", qty: 0.5, unit: "cup", cat: "Produce" },
+        { name: "Tomatoes", qty: 2, unit: "unit", cat: "Produce" },
+        { name: "Cucumber", qty: 0.5, unit: "unit", cat: "Produce" },
+        { name: "Olive oil", qty: 3, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Lemon", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Hummus", qty: 0.5, unit: "cup", cat: "Dairy & Eggs" },
+      ],
+      method: "Combine cooked quinoa with herbs, tomato, cucumber, olive oil and lemon juice. Serve topped with grilled chicken and a dollop of hummus.",
+    },
+    d6: {
+      name: "Tofu & Vegetable Curry",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Firm tofu", qty: 400, unit: "g", cat: "Meat & Seafood" },
+        { name: "Cornflour", qty: 1, unit: "tbsp", cat: "Grains & Legumes" },
+        { name: "Onion", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Garlic", qty: 2, unit: "clove", cat: "Produce" },
+        { name: "Ginger", qty: 1, unit: "tbsp", cat: "Produce" },
+        { name: "Curry powder", qty: 1, unit: "tbsp", cat: "Herbs & Spices" },
+        { name: "Turmeric", qty: 1, unit: "tsp", cat: "Herbs & Spices" },
+        { name: "Light coconut milk", qty: 1, unit: "can", cat: "Canned & Jarred" },
+        { name: "Mixed vegetables (pumpkin/capsicum/spinach)", qty: 2, unit: "cup", cat: "Produce" },
+        { name: "Basmati rice", qty: 1.5, unit: "cup", cat: "Grains & Legumes" },
+      ],
+      method: "Toss tofu in cornflour, bake 20-25 min at 200°C until crisp. Sauté onion, garlic and ginger, add spices, then coconut milk and vegetables, simmer until tender. Stir through tofu. Serve over rice.",
+    },
+    d7: {
+      name: "Slow-Cooker Beef & Lentil Ragu",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Beef chuck (gravy beef)", qty: 500, unit: "g", cat: "Meat & Seafood" },
+        { name: "Onion", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Carrot", qty: 2, unit: "unit", cat: "Produce" },
+        { name: "Celery", qty: 2, unit: "stalk", cat: "Produce" },
+        { name: "Garlic", qty: 2, unit: "clove", cat: "Produce" },
+        { name: "Brown or green lentils", qty: 0.75, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Passata", qty: 700, unit: "g", cat: "Canned & Jarred" },
+        { name: "Beef stock", qty: 2, unit: "cup", cat: "Canned & Jarred" },
+        { name: "Italian herbs", qty: 1, unit: "tsp", cat: "Herbs & Spices" },
+        { name: "Bay leaf", qty: 1, unit: "unit", cat: "Herbs & Spices" },
+        { name: "Wholemeal pasta", qty: 400, unit: "g", cat: "Grains & Legumes" },
+      ],
+      method: "Combine everything except pasta in a slow cooker, cook on low 7-8 hrs (or simmer stovetop 2 hrs). Serve over pasta. Freezes very well - good one to double.",
+    },
+    d8: {
+      name: "Miso Salmon & Soba Noodles",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Salmon fillets", qty: 4, unit: "unit", cat: "Meat & Seafood" },
+        { name: "Miso paste", qty: 2, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Honey", qty: 1, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Soy sauce", qty: 1, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Sesame oil", qty: 1, unit: "tsp", cat: "Condiments & Oils" },
+        { name: "Soba noodles", qty: 300, unit: "g", cat: "Grains & Legumes" },
+        { name: "Bok choy / Asian greens", qty: 2, unit: "bunch", cat: "Produce" },
+        { name: "Garlic", qty: 1, unit: "tbsp", cat: "Produce" },
+        { name: "Ginger", qty: 1, unit: "tsp", cat: "Produce" },
+        { name: "Sesame seeds", qty: 1, unit: "tbsp", cat: "Grains & Legumes" },
+      ],
+      method: "Mix miso, honey, soy and sesame oil, marinate salmon 10-15 min. Bake or pan-fry until cooked through. Cook soba noodles. Stir-fry greens with garlic and ginger. Serve together, sprinkle sesame seeds.",
+    },
+    d9: {
+      name: "Chicken & Vegetable Fried Rice",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Chicken breast", qty: 500, unit: "g", cat: "Meat & Seafood" },
+        { name: "Brown rice", qty: 1.5, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Eggs", qty: 3, unit: "unit", cat: "Dairy & Eggs" },
+        { name: "Peas (frozen)", qty: 1, unit: "cup", cat: "Frozen" },
+        { name: "Capsicum", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Spring onion", qty: 4, unit: "unit", cat: "Produce" },
+        { name: "Soy sauce", qty: 3, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Sesame oil", qty: 1, unit: "tsp", cat: "Condiments & Oils" },
+        { name: "Vegetable oil", qty: 1, unit: "tbsp", cat: "Condiments & Oils" },
+      ],
+      method: "Cook chicken in oil until done, set aside. Scramble eggs, set aside. Stir-fry rice, peas and capsicum until heated through. Return chicken and egg, add soy sauce and sesame oil, toss, top with spring onion.",
+    },
+    d10: {
+      name: "Lamb Skewers & Greek Salad",
+      kind: "dinner",
+      baseServings: 4,
+      ingredients: [
+        { name: "Lamb, diced", qty: 500, unit: "g", cat: "Meat & Seafood" },
+        { name: "Olive oil", qty: 1, unit: "tbsp", cat: "Condiments & Oils" },
+        { name: "Oregano", qty: 1, unit: "tsp", cat: "Herbs & Spices" },
+        { name: "Garlic", qty: 1, unit: "clove", cat: "Produce" },
+        { name: "Lemon", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Tomatoes", qty: 2, unit: "unit", cat: "Produce" },
+        { name: "Cucumber", qty: 0.5, unit: "unit", cat: "Produce" },
+        { name: "Red onion", qty: 0.5, unit: "unit", cat: "Produce" },
+        { name: "Kalamata olives", qty: 0.5, unit: "cup", cat: "Canned & Jarred" },
+        { name: "Feta cheese", qty: 100, unit: "g", cat: "Dairy & Eggs" },
+        { name: "Wholegrain pita", qty: 4, unit: "unit", cat: "Bakery" },
+        { name: "Greek yoghurt", qty: 0.5, unit: "cup", cat: "Dairy & Eggs" },
+        { name: "Mint", qty: 1, unit: "tbsp", cat: "Produce" },
+      ],
+      method: "Marinate lamb in oil, oregano, garlic and lemon at least 30 min. Skewer and grill/BBQ. Combine salad ingredients. Mix tzatziki ingredients. Serve lamb with salad, tzatziki and warm pita.",
+    },
+  };
+
+  // Schedule: which recipe fills each slot, per day
+  var SCHEDULE = [
+    { day: 1, breakfast: "b1", lunch: "l1", dinner: "d1" },
+    { day: 2, breakfast: "b2", lunch: "l2", dinner: "d2" },
+    { day: 3, breakfast: "b1", lunch: "l3", dinner: "d3" },
+    { day: 4, breakfast: "b2", lunch: "l4", dinner: "d4" },
+    { day: 5, breakfast: "b1", lunch: "l5", dinner: "d5" },
+    { day: 6, breakfast: "b2", lunch: "l1", dinner: "d6" },
+    { day: 7, breakfast: "b1", lunch: "l2", dinner: "d7" },
+    { day: 8, breakfast: "b2", lunch: "l3", dinner: "d8" },
+    { day: 9, breakfast: "b1", lunch: "l4", dinner: "d9" },
+    { day: 10, breakfast: "b2", lunch: "l5", dinner: "d10" },
+  ];
+
+  // Snacks: ingredient quantities are PER SERVING already (no baseServings scaling)
+  var SNACKS = {
+    s1: {
+      name: "Greek Yoghurt, Honey & Walnuts",
+      ingredients: [
+        { name: "Greek yoghurt", qty: 0.75, unit: "cup", cat: "Dairy & Eggs" },
+        { name: "Honey", qty: 1, unit: "tsp", cat: "Condiments & Oils" },
+        { name: "Walnuts", qty: 1, unit: "tbsp", cat: "Grains & Legumes" },
+      ],
+    },
+    s2: {
+      name: "Fruit & Peanut Butter",
+      ingredients: [
+        { name: "Apple or banana", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Natural peanut butter", qty: 1.5, unit: "tbsp", cat: "Condiments & Oils" },
+      ],
+    },
+    s3: {
+      name: "Hummus & Veg Sticks",
+      ingredients: [
+        { name: "Hummus", qty: 0.25, unit: "cup", cat: "Dairy & Eggs" },
+        { name: "Carrot", qty: 1, unit: "unit", cat: "Produce" },
+        { name: "Celery", qty: 2, unit: "stalk", cat: "Produce" },
+        { name: "Cucumber", qty: 0.25, unit: "unit", cat: "Produce" },
+      ],
+    },
+    s4: {
+      name: "Protein Energy Balls (2)",
+      ingredients: [
+        { name: "Rolled oats", qty: 0.125, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Pitted dates", qty: 0.125, unit: "cup", cat: "Grains & Legumes" },
+        { name: "Natural peanut butter", qty: 0.04, unit: "cup", cat: "Condiments & Oils" },
+        { name: "Chia seeds", qty: 0.25, unit: "tbsp", cat: "Grains & Legumes" },
+      ],
+    },
+    s5: {
+      name: "Trail Mix",
+      ingredients: [
+        { name: "Mixed nuts", qty: 3, unit: "tbsp", cat: "Grains & Legumes" },
+        { name: "Dried apricots", qty: 1, unit: "tbsp", cat: "Grains & Legumes" },
+      ],
+    },
+    s6: {
+      name: "Boiled Eggs (2)",
+      ingredients: [{ name: "Eggs", qty: 2, unit: "unit", cat: "Dairy & Eggs" }],
+    },
+    s7: {
+      name: "Cottage Cheese & Pineapple",
+      ingredients: [
+        { name: "Cottage cheese", qty: 0.5, unit: "cup", cat: "Dairy & Eggs" },
+        { name: "Pineapple", qty: 0.25, unit: "cup", cat: "Produce" },
+      ],
+    },
+    s8: {
+      name: "Kefir",
+      ingredients: [{ name: "Kefir or probiotic yoghurt", qty: 1, unit: "bottle", cat: "Dairy & Eggs" }],
+    },
+  };
+
+  var CATEGORY_ORDER = [
+    "Produce",
+    "Meat & Seafood",
+    "Dairy & Eggs",
+    "Grains & Legumes",
+    "Canned & Jarred",
+    "Frozen",
+    "Bakery",
+    "Condiments & Oils",
+    "Herbs & Spices",
+  ];
+
+  var MEAL_LABEL = { breakfast: "Breakfast", lunch: "Lunch", dinner: "Dinner" };
+
+  // Some ingredients are written with different units across recipes
+  // (e.g. "olive oil" as both cup and tbsp). This table converts every
+  // unit for a given ingredient into one canonical unit before totals
+  // are combined, so the shopping list never splits one item into two rows.
+  var UNIT_NORMALIZATION = {
+    "Olive oil": { canonical: "tbsp", factors: { tbsp: 1, cup: 16 } },
+    "Sesame oil": { canonical: "tbsp", factors: { tbsp: 1, tsp: 1 / 3 } },
+    "Honey": { canonical: "tbsp", factors: { tbsp: 1, tsp: 1 / 3 } },
+    "Ginger": { canonical: "tbsp", factors: { tbsp: 1, tsp: 1 / 3 } },
+    "Ground cumin": { canonical: "tbsp", factors: { tbsp: 1, tsp: 1 / 3 } },
+    "Natural peanut butter": { canonical: "tbsp", factors: { tbsp: 1, cup: 16 } },
+    "Dried apricots": { canonical: "cup", factors: { cup: 1, tbsp: 1 / 16 } },
+    "Mint": { canonical: "cup", factors: { cup: 1, tbsp: 1 / 16 } },
+    "Walnuts": { canonical: "cup", factors: { cup: 1, tbsp: 1 / 16 } },
+    "Garlic": { canonical: "clove", factors: { clove: 1, tbsp: 3 } },
+    "Feta cheese": { canonical: "g", factors: { g: 1, cup: 150 } },
+    "Cherry tomatoes": { canonical: "g", factors: { g: 1, cup: 150 } },
+  };
+
+  function normalizeIngredient(name, qty, unit) {
+    var rule = UNIT_NORMALIZATION[name];
+    if (!rule) return { qty: qty, unit: unit };
+    var factor = rule.factors[unit];
+    if (factor === undefined) return { qty: qty, unit: unit };
+    return { qty: qty * factor, unit: rule.canonical };
+  }
+
+  function fmtQty(qty) {
+    var rounded = Math.round(qty * 100) / 100;
+    if (Number.isInteger(rounded)) return String(rounded);
+    var fracMap = { 0.25: "¼", 0.5: "½", 0.75: "¾", 0.33: "⅓", 0.67: "⅔" };
+    var whole = Math.floor(rounded);
+    var frac = Math.round((rounded - whole) * 100) / 100;
+    if (fracMap[frac]) return whole > 0 ? whole + fracMap[frac] : fracMap[frac];
+    return String(Math.round(rounded * 100) / 100);
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c];
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // STATE
+  // -------------------------------------------------------------------------
+  var state = {
+    selections: {},
+    snackSel: {},
+    openRecipes: {},
+    copied: false,
+    copiedPlain: false,
+  };
+
+  SCHEDULE.forEach(function (d) {
+    state.selections[d.day] = {
+      breakfast: { on: false, servings: 2 },
+      lunch: { on: false, servings: 2 },
+      dinner: { on: false, servings: 2 },
+    };
+  });
+  Object.keys(SNACKS).forEach(function (id) {
+    state.snackSel[id] = { on: false, servings: 2 };
+  });
+
+  // -------------------------------------------------------------------------
+  // COMPUTED TOTALS
+  // -------------------------------------------------------------------------
+  function computeTotals() {
+    var totals = {};
+    var mealCount = 0;
+
+    SCHEDULE.forEach(function (d) {
+      ["breakfast", "lunch", "dinner"].forEach(function (slot) {
+        var sel = state.selections[d.day][slot];
+        if (!sel.on) return;
+        mealCount++;
+        var recipe = RECIPES[d[slot]];
+        var scale = sel.servings / recipe.baseServings;
+        recipe.ingredients.forEach(function (ing) {
+          var norm = normalizeIngredient(ing.name, ing.qty, ing.unit);
+          var key = ing.name + "|" + norm.unit + "|" + ing.cat;
+          totals[key] = (totals[key] || 0) + norm.qty * scale;
+        });
+      });
+    });
+
+    Object.keys(SNACKS).forEach(function (id) {
+      var sel = state.snackSel[id];
+      if (!sel.on) return;
+      mealCount++;
+      SNACKS[id].ingredients.forEach(function (ing) {
+        var norm = normalizeIngredient(ing.name, ing.qty, ing.unit);
+        var key = ing.name + "|" + norm.unit + "|" + ing.cat;
+        totals[key] = (totals[key] || 0) + norm.qty * sel.servings;
+      });
+    });
+
+    var byCat = {};
+    var itemCount = 0;
+    Object.keys(totals).forEach(function (key) {
+      var parts = key.split("|");
+      var name = parts[0], unit = parts[1], cat = parts[2];
+      if (!byCat[cat]) byCat[cat] = [];
+      byCat[cat].push({ name: name, unit: unit, qty: totals[key] });
+      itemCount++;
+    });
+    Object.keys(byCat).forEach(function (cat) {
+      byCat[cat].sort(function (a, b) { return a.name.localeCompare(b.name); });
+    });
+
+    return { grouped: byCat, itemCount: itemCount, mealCount: mealCount };
+  }
+
+  // -------------------------------------------------------------------------
+  // ACTIONS
+  // -------------------------------------------------------------------------
+  function mealCheck(day, slot) {
+    var sel = state.selections[day][slot];
+    sel.on = !sel.on;
+    refreshAll();
+  }
+  function mealStep(day, slot, delta) {
+    var sel = state.selections[day][slot];
+    sel.servings = Math.max(1, Math.min(8, sel.servings + delta));
+    refreshAll();
+  }
+  function toggleDayAuto(day) {
+    var daySel = state.selections[day];
+    var allOn = daySel.breakfast.on && daySel.lunch.on && daySel.dinner.on;
+    var on = !allOn;
+    ["breakfast", "lunch", "dinner"].forEach(function (slot) { daySel[slot].on = on; });
+    refreshAll();
+  }
+  function snackCheck(id) {
+    state.snackSel[id].on = !state.snackSel[id].on;
+    refreshAll();
+  }
+  function snackStep(id, delta) {
+    var sel = state.snackSel[id];
+    sel.servings = Math.max(1, Math.min(8, sel.servings + delta));
+    refreshAll();
+  }
+  function clearAll() {
+    Object.keys(state.selections).forEach(function (day) {
+      var d = state.selections[day];
+      d.breakfast.on = false; d.lunch.on = false; d.dinner.on = false;
+    });
+    Object.keys(state.snackSel).forEach(function (id) { state.snackSel[id].on = false; });
+    refreshAll();
+  }
+  function toggleRecipe(id) {
+    state.openRecipes[id] = !state.openRecipes[id];
+    renderRecipeRef();
+  }
+
+  // Robust clipboard copy: tries the async Clipboard API first, falls back
+  // to a hidden textarea + execCommand if that's blocked or unavailable.
+  function copyToClipboard(text, onDone) {
+    function fallbackCopy() {
+      try {
+        var textarea = document.createElement("textarea");
+        textarea.value = text;
+        textarea.style.position = "fixed";
+        textarea.style.left = "-9999px";
+        textarea.style.top = "0";
+        document.body.appendChild(textarea);
+        textarea.focus();
+        textarea.select();
+        var ok = document.execCommand("copy");
+        document.body.removeChild(textarea);
+        onDone(!!ok);
+      } catch (err) {
+        onDone(false);
+      }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext !== false) {
+      navigator.clipboard.writeText(text).then(
+        function () { onDone(true); },
+        fallbackCopy
+      );
+    } else {
+      fallbackCopy();
+    }
+  }
+
+  function copyList() {
+    var totals = computeTotals();
+    var lines = [];
+    CATEGORY_ORDER.forEach(function (cat) {
+      if (totals.grouped[cat]) {
+        totals.grouped[cat].forEach(function (item) {
+          lines.push((fmtQty(item.qty) + " " + (item.unit === "unit" ? "" : item.unit) + " " + item.name).replace(/\s+/g, " ").trim());
+        });
+      }
+    });
+    copyToClipboard(lines.join("\n"), function (success) {
+      state.copied = success ? "ok" : "failed";
+      renderShoppingList();
+      setTimeout(function () { state.copied = false; renderShoppingList(); }, 2000);
+    });
+  }
+
+  function copyPlainList() {
+    // Names only, no quantities — DoorDash's list importer doesn't parse
+    // quantities reliably, so this is the version to paste there.
+    var totals = computeTotals();
+    var names = [];
+    CATEGORY_ORDER.forEach(function (cat) {
+      if (totals.grouped[cat]) {
+        totals.grouped[cat].forEach(function (item) { names.push(item.name); });
+      }
+    });
+    copyToClipboard(names.join("\n"), function (success) {
+      state.copiedPlain = success ? "ok" : "failed";
+      renderDoordash();
+      setTimeout(function () { state.copiedPlain = false; renderDoordash(); }, 2000);
+    });
+  }
+
+  // -------------------------------------------------------------------------
+  // RENDER
+  // -------------------------------------------------------------------------
+  var plannerEl = document.getElementById("plannerRoot");
+  var shoppingListEl = document.getElementById("shoppingListRoot");
+  var doordashEl = document.getElementById("doordashRoot");
+  var recipeRefEl = document.getElementById("recipeRefRoot");
+
+  function renderMealRow(d, slot) {
+    var recipe = RECIPES[d[slot]];
+    var sel = state.selections[d.day][slot];
+    var stepper = sel.on
+      ? '<span class="stepper">' +
+          '<button type="button" class="stepper-btn" data-action="meal-step" data-day="' + d.day + '" data-slot="' + slot + '" data-delta="-1">−</button>' +
+          '<span class="stepper-val">' + sel.servings + '</span>' +
+          '<button type="button" class="stepper-btn" data-action="meal-step" data-day="' + d.day + '" data-slot="' + slot + '" data-delta="1">+</button>' +
+        '</span>'
+      : '';
+    return (
+      '<div class="meal-row meal-row--' + slot + (sel.on ? ' is-on' : '') + '">' +
+        '<input type="checkbox" data-role="meal-check" data-day="' + d.day + '" data-slot="' + slot + '" ' + (sel.on ? 'checked' : '') + '>' +
+        '<span class="meal-info">' +
+          '<span class="meal-kind">' + MEAL_LABEL[slot] + '</span>' +
+          '<span class="meal-name">' + escapeHtml(recipe.name) + '</span>' +
+        '</span>' +
+        stepper +
+      '</div>'
+    );
+  }
+
+  function renderDayCard(d) {
+    var daySel = state.selections[d.day];
+    var allOn = daySel.breakfast.on && daySel.lunch.on && daySel.dinner.on;
+    return (
+      '<div class="day-card">' +
+        '<div class="day-card-head">' +
+          '<span class="day-card-title">Day ' + d.day + '</span>' +
+          '<button type="button" class="day-toggle" data-action="toggle-day" data-day="' + d.day + '">' + (allOn ? 'deselect day' : 'select day') + '</button>' +
+        '</div>' +
+        renderMealRow(d, "breakfast") +
+        renderMealRow(d, "lunch") +
+        renderMealRow(d, "dinner") +
+      '</div>'
+    );
+  }
+
+  function renderSnackCard(id, snack) {
+    var sel = state.snackSel[id];
+    var stepper = sel.on
+      ? '<span class="stepper">' +
+          '<button type="button" class="stepper-btn" data-action="snack-step" data-id="' + id + '" data-delta="-1">−</button>' +
+          '<span class="stepper-val">' + sel.servings + '</span>' +
+          '<button type="button" class="stepper-btn" data-action="snack-step" data-id="' + id + '" data-delta="1">+</button>' +
+        '</span>'
+      : '';
+    return (
+      '<div class="snack-row' + (sel.on ? ' is-on' : '') + '">' +
+        '<input type="checkbox" data-role="snack-check" data-id="' + id + '" ' + (sel.on ? 'checked' : '') + '>' +
+        '<span class="snack-name">' + escapeHtml(snack.name) + '</span>' +
+        stepper +
+      '</div>'
+    );
+  }
+
+  function renderPlanner() {
+    var totals = computeTotals();
+    var html =
+      '<div class="planner-toolbar">' +
+        '<div class="planner-count">' + totals.mealCount + ' meal' + (totals.mealCount !== 1 ? 's' : '') + ' selected</div>' +
+        '<button type="button" class="btn-ghost" data-action="clear-all">Clear all</button>' +
+      '</div>' +
+      '<div class="day-grid">' + SCHEDULE.map(renderDayCard).join('') + '</div>' +
+      '<div class="snacks-block">' +
+        '<h3>Snacks</h3>' +
+        '<div class="snack-grid">' + Object.keys(SNACKS).map(function (id) { return renderSnackCard(id, SNACKS[id]); }).join('') + '</div>' +
+      '</div>';
+    plannerEl.innerHTML = html;
+  }
+
+  function renderShoppingList() {
+    var totals = computeTotals();
+    var cats = CATEGORY_ORDER.filter(function (c) { return totals.grouped[c]; });
+    var body;
+    if (totals.itemCount === 0) {
+      body = '<div class="receipt-empty">Nothing selected yet.<br>Tick meals on the left to build your list.</div>';
+    } else {
+      body =
+        '<div class="receipt-body">' +
+          cats.map(function (cat) {
+            return (
+              '<div class="receipt-cat">' +
+                '<div class="receipt-cat-name">' + cat.toUpperCase() + '</div>' +
+                totals.grouped[cat].map(function (item) {
+                  return (
+                    '<div class="receipt-item">' +
+                      '<span>' + escapeHtml(item.name) + '</span>' +
+                      '<span class="receipt-qty">' + fmtQty(item.qty) + ' ' + (item.unit !== 'unit' ? item.unit : '') + '</span>' +
+                    '</div>'
+                  );
+                }).join('') +
+              '</div>'
+            );
+          }).join('') +
+        '</div>' +
+        '<div class="receipt-rule"></div>' +
+        '<button type="button" class="btn-primary" data-action="copy-list">' +
+          (state.copied === 'ok' ? 'Copied ✓' : state.copied === 'failed' ? "Couldn't copy — select & copy manually" : 'Copy list (with quantities)') +
+        '</button>';
+    }
+    shoppingListEl.innerHTML =
+      '<div class="receipt">' +
+        '<div class="receipt-head">' +
+          '<div class="receipt-title">Shopping List</div>' +
+          '<div class="receipt-sub">' + totals.mealCount + ' meals · ' + totals.itemCount + ' items · with quantities</div>' +
+        '</div>' +
+        '<div class="receipt-rule"></div>' +
+        body +
+      '</div>' +
+      '<p class="hint-text">Quantities scale to the servings you set per meal. Selections reset if you reload the page — copy your list before closing.</p>';
+  }
+
+  function renderDoordash() {
+    var totals = computeTotals();
+    var cats = CATEGORY_ORDER.filter(function (c) { return totals.grouped[c]; });
+    var body;
+    if (totals.itemCount === 0) {
+      body = '<div class="receipt-empty">Nothing selected yet.</div>';
+    } else {
+      body =
+        '<div class="doordash-body">' +
+          cats.map(function (cat) {
+            return (
+              '<div class="receipt-cat">' +
+                '<div class="receipt-cat-name">' + cat.toUpperCase() + '</div>' +
+                totals.grouped[cat].map(function (item) {
+                  return '<div class="doordash-item">' + escapeHtml(item.name) + '</div>';
+                }).join('') +
+              '</div>'
+            );
+          }).join('') +
+        '</div>' +
+        '<div class="doordash-rule"></div>' +
+        '<button type="button" class="btn-secondary" data-action="copy-plain">' +
+          (state.copiedPlain === 'ok' ? 'Copied ✓' : state.copiedPlain === 'failed' ? "Couldn't copy — select & copy manually" : 'Copy for DoorDash') +
+        '</button>';
+    }
+    doordashEl.innerHTML =
+      '<div class="doordash-card">' +
+        '<div class="doordash-head">' +
+          '<div class="doordash-title">DoorDash List</div>' +
+          '<div class="doordash-sub">' + totals.itemCount + ' items · names only, no quantities</div>' +
+        '</div>' +
+        '<div class="doordash-rule"></div>' +
+        body +
+      '</div>' +
+      '<p class="hint-text">Paste this one into DoorDash&rsquo;s &ldquo;Paste your grocery list&rdquo; &mdash; it only handles item names, not quantities.</p>';
+  }
+
+  function renderRecipeItem(id) {
+    var recipe = RECIPES[id];
+    var isOpen = !!state.openRecipes[id];
+    var detail = isOpen
+      ? '<div class="recipe-detail"><div class="recipe-detail-inner">' +
+          '<div class="recipe-col">' +
+            '<div class="recipe-col-label">Ingredients (serves 4)</div>' +
+            '<ul class="recipe-ingredients">' +
+              recipe.ingredients.map(function (ing) {
+                return '<li>' + fmtQty(ing.qty) + ' ' + (ing.unit !== 'unit' ? ing.unit : '') + ' ' + escapeHtml(ing.name) + '</li>';
+              }).join('') +
+            '</ul>' +
+          '</div>' +
+          '<div class="recipe-col">' +
+            '<div class="recipe-col-label">Method</div>' +
+            '<p class="recipe-method">' + escapeHtml(recipe.method) + '</p>' +
+          '</div>' +
+        '</div></div>'
+      : '';
+    return (
+      '<div class="recipe-card">' +
+        '<button type="button" class="recipe-toggle" data-action="toggle-recipe" data-id="' + id + '">' +
+          '<span class="recipe-name">' + escapeHtml(recipe.name) + '</span>' +
+          '<span class="recipe-caret' + (isOpen ? ' is-open' : '') + '">▾</span>' +
+        '</button>' +
+        detail +
+      '</div>'
+    );
+  }
+
+  function renderRecipeRef() {
+    var kinds = ["breakfast", "lunch", "dinner"];
+    recipeRefEl.innerHTML = kinds.map(function (kind) {
+      var ids = Object.keys(RECIPES).filter(function (id) { return RECIPES[id].kind === kind; });
+      return (
+        '<div class="recipe-group">' +
+          '<div class="recipe-pill recipe-pill--' + kind + '">' + MEAL_LABEL[kind] + ' · ' + ids.length + ' recipe' + (ids.length !== 1 ? 's' : '') + '</div>' +
+          '<div class="recipe-list">' + ids.map(renderRecipeItem).join('') + '</div>' +
+        '</div>'
+      );
+    }).join('');
+  }
+
+  function refreshAll() {
+    renderPlanner();
+    renderShoppingList();
+    renderDoordash();
+  }
+
+  // -------------------------------------------------------------------------
+  // EVENTS (delegated — survives full re-renders)
+  // -------------------------------------------------------------------------
+  document.addEventListener("change", function (e) {
+    var t = e.target;
+    if (t.matches && t.matches('[data-role="meal-check"]')) {
+      mealCheck(Number(t.dataset.day), t.dataset.slot);
+    } else if (t.matches && t.matches('[data-role="snack-check"]')) {
+      snackCheck(t.dataset.id);
+    }
+  });
+
+  document.addEventListener("click", function (e) {
+    var btn = e.target.closest && e.target.closest('[data-action]');
+    if (!btn) return;
+    var action = btn.dataset.action;
+    if (action === 'toggle-day') toggleDayAuto(Number(btn.dataset.day));
+    else if (action === 'meal-step') mealStep(Number(btn.dataset.day), btn.dataset.slot, Number(btn.dataset.delta));
+    else if (action === 'snack-step') snackStep(btn.dataset.id, Number(btn.dataset.delta));
+    else if (action === 'clear-all') clearAll();
+    else if (action === 'copy-list') copyList();
+    else if (action === 'copy-plain') copyPlainList();
+    else if (action === 'toggle-recipe') toggleRecipe(btn.dataset.id);
+  });
+
+  // -------------------------------------------------------------------------
+  // INIT
+  // -------------------------------------------------------------------------
+  document.getElementById('dayCount').textContent = SCHEDULE.length;
+  document.getElementById('recipeCount').textContent = Object.keys(RECIPES).length;
+  document.getElementById('snackCount').textContent = Object.keys(SNACKS).length;
+
+  refreshAll();
+  renderRecipeRef();
+})();
+</script>
+</body>
+</html>

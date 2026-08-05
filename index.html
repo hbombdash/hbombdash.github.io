@@ -279,6 +279,54 @@
     color:var(--ink);
   }
 
+  /* ---------- Hayna's Kitchen ---------- */
+  .kitchen-card{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:32px;
+    background:var(--chalk);
+    border:1.5px solid var(--ink);
+    border-radius:var(--radius);
+    padding:32px;
+    text-decoration:none;
+    transition:transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+  }
+  .kitchen-card:hover, .kitchen-card:focus-visible{
+    transform:translateY(-4px);
+    box-shadow:6px 8px 0 var(--ink);
+    background:#fff;
+  }
+  .kitchen-card:hover .arrow, .kitchen-card:focus-visible .arrow{transform:translateX(4px);}
+  .kitchen-card:focus-visible{outline:3px solid var(--coral); outline-offset:3px;}
+  .kitchen-graphic{flex-shrink:0; width:120px; height:120px;}
+  .kitchen-copy{flex:1; min-width:0;}
+  .kitchen-eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  .kitchen-copy h3{
+    font-family:'Archivo Black', sans-serif;
+    font-weight:400;
+    font-size:clamp(24px,3.4vw,32px);
+    margin:6px 0 10px;
+    letter-spacing:-0.01em;
+  }
+  .kitchen-copy p{
+    font-size:14px;
+    color:var(--ink-soft);
+    line-height:1.6;
+    margin:0 0 18px;
+    max-width:60ch;
+  }
+  @media (max-width:640px){
+    .kitchen-card{flex-direction:column; align-items:flex-start; text-align:left; gap:20px;}
+    .kitchen-graphic{width:96px; height:96px;}
+  }
+
   footer{
     border-top:1px solid var(--line);
     padding:28px clamp(20px,6vw,64px) 40px;
@@ -357,6 +405,32 @@
       </div>
     </div>
   </div>
+
+  <div class="section-head" style="margin-top:64px;">
+    <h2>Hayna's Kitchen</h2>
+    <span class="count">Fuel for the squad</span>
+  </div>
+
+  <a class="kitchen-card" href="kitchen/index.html">
+    <svg class="kitchen-graphic" viewBox="0 0 140 140" aria-hidden="true">
+      <path d="M50 54 q-6 -14 0 -24 q6 10 0 24" fill="none" stroke="var(--ink-soft)" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+      <path d="M70 50 q-6 -16 0 -28 q6 12 0 28" fill="none" stroke="var(--ink-soft)" stroke-width="3" stroke-linecap="round" opacity="0.75"/>
+      <path d="M90 54 q-6 -14 0 -24 q6 10 0 24" fill="none" stroke="var(--ink-soft)" stroke-width="3" stroke-linecap="round" opacity="0.55"/>
+      <rect x="26" y="64" width="88" height="12" rx="6" fill="var(--ocean-deep)" stroke="var(--ink)" stroke-width="3"/>
+      <rect x="30" y="70" width="80" height="46" rx="8" fill="var(--coral)" stroke="var(--ink)" stroke-width="3"/>
+      <path d="M30 82 q-14 0 -14 14 q0 14 14 14" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+      <path d="M110 82 q14 0 14 14 q0 14 -14 14" fill="none" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+      <circle cx="70" cy="58" r="6" fill="var(--sand)" stroke="var(--ink)" stroke-width="2.5"/>
+      <circle cx="53" cy="66" r="5" fill="var(--sand)" stroke="var(--ink)" stroke-width="2"/>
+      <circle cx="87" cy="65" r="4" fill="var(--ocean-mid)" stroke="var(--ink)" stroke-width="2"/>
+    </svg>
+    <div class="kitchen-copy">
+      <span class="kitchen-eyebrow">Meal Plan · Shopping List · Recipes</span>
+      <h3>Build this week's shop</h3>
+      <p>Tick off whichever meals you're actually cooking this week, set servings for each, and get an instant shopping list — sorted by aisle, ready to copy or paste straight into DoorDash.</p>
+      <div class="bib-cta">Open the kitchen <span class="arrow">→</span></div>
+    </div>
+  </a>
 </main>
 
 <footer>
