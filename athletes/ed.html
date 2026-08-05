@@ -79,6 +79,46 @@ ${a.join(`
   </head>
   <body>
     <div id="app"></div>
+    <!-- Back-to-start-list link. Kept outside #app (and out of the Svelte
+         bundle) so it survives regardless of how the app renders its own
+         header/sidebar. Reuses the app's own theme CSS vars so it tracks
+         light/dark mode automatically. -->
+    <a href="../index.html" class="back-to-list" aria-label="Back to start list">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      <span>Start List</span>
+    </a>
+    <style id="back-to-list-style">
+      .back-to-list {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        background: var(--bg-secondary, #fff);
+        color: var(--text-primary, #0f172a);
+        border: 1px solid var(--border-medium, rgba(0, 0, 0, 0.12));
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.16);
+        font-family: 'Outfit', system-ui, sans-serif;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+        line-height: 1;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+      .back-to-list:hover,
+      .back-to-list:focus-visible {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.22);
+      }
+      @media (max-width: 480px) {
+        .back-to-list span { display: none; }
+        .back-to-list { padding: 12px; }
+      }
+    </style>
     <!-- Plan Data (will be replaced by CLI) -->
     <script type="application/json" id="plan-data">
 {
